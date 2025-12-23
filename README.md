@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 <p align="center">
-  <img src="docs/preview.png" alt="DataLens AI Preview" width="800">
+  <img src="preview.png" alt="DataLens AI Preview" width="800">
 </p>
 
 ## ✨ Features
