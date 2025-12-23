@@ -105,7 +105,7 @@ export default function App() {
               </button>
             )}
             <a
-              href="https://github.com/yourusername/datalens-ai"
+              href="https://github.com/ss-marvin/datalens-ai"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-xl bg-surface-overlay flex items-center justify-center text-lens-400 hover:text-lens-200 hover:bg-surface-highlight transition-colors"
