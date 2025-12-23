@@ -58,7 +58,7 @@ Instant insights about your dataset before you even ask:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/datalens-ai.git
+git clone https://github.com/ss-marvin/datalens-ai.git
 cd datalens-ai
 
 # Backend setup
