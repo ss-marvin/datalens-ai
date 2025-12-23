@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-highlight;
+  }
+  
+  body {
+    @apply bg-surface text-lens-100 font-sans antialiased;
+    background-image: 
+      radial-gradient(ellipse at top, rgba(232, 196, 160, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(201, 168, 124, 0.02) 0%, transparent 50%);
+  }
+
+  ::selection {
+    @apply bg-accent-primary/20 text-accent-primary;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-highlight rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent-muted;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface-raised/80 backdrop-blur-xl border border-surface-highlight/50 rounded-2xl;
+  }
+  
+  .glass-panel-solid {
+    @apply bg-surface-raised border border-surface-highlight rounded-2xl;
+  }
+  
+  .input-field {
+    @apply w-full bg-surface border border-surface-highlight rounded-xl px-4 py-3 
+           text-lens-100 placeholder:text-lens-600
+           focus:outline-none focus:border-accent-muted focus:ring-1 focus:ring-accent-muted/20
+           transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-accent-primary text-surface font-medium rounded-xl
+           hover:bg-accent-secondary active:scale-[0.98]
+           transition-all duration-200 ease-out;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-surface-overlay border border-surface-highlight text-lens-200 font-medium rounded-xl
+           hover:bg-surface-highlight hover:border-accent-muted/30
+           transition-all duration-200 ease-out;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent;
+  }
+  
+  .loading-shimmer {
+    @apply bg-gradient-to-r from-surface-overlay via-surface-highlight to-surface-overlay bg-[length:200%_100%] animate-shimmer;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
