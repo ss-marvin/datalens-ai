@@ -155,27 +155,27 @@ class DataService:
             file_type=file_type,
             row_count=len(df),
             column_count=len(df.columns),
-            memory_usage_mb=round(df.memory_usage(deep=True).sum() / 1024 / 1024, 2),
+            memory_usage_mb=round(df.memory_usage(deep=True).sum() / 1024 / 1024, 6),
             columns=columns,
             sample_data=sample,
             quality_score=round(completeness, 1),
             warnings=warnings,
         )
-    
+
     @classmethod
     def execute_pandas_code(cls, session_id: str, code: str) -> dict[str, Any]:
         """Safely execute pandas code on session data."""
         df = cls.get_session(session_id)
         if df is None:
             raise ValueError(f"Session not found: {session_id}")
-        
+
         # Create a restricted execution environment
         local_vars = {"df": df.copy(), "pd": pd, "np": np}
-        
+
         try:
             exec(code, {"__builtins__": {}}, local_vars)
             result = local_vars.get("result")
-            
+
             if isinstance(result, pd.DataFrame):
                 return {"type": "dataframe", "data": result.to_dict(orient="records")}
             elif isinstance(result, pd.Series):
@@ -186,6 +186,6 @@ class DataService:
                 return {"type": "collection", "data": result}
             else:
                 return {"type": "unknown", "data": str(result)}
-                
+
         except Exception as e:
             raise RuntimeError(f"Code execution failed: {str(e)}")

@@ -1,13 +1,21 @@
 import { motion } from 'framer-motion';
 import { 
   Database, Columns, HardDrive, AlertTriangle, 
-  CheckCircle2, FileType, Hash, Type
+  CheckCircle2, FileType, Hash, Type, Info
 } from 'lucide-react';
 import clsx from 'clsx';
 import type { DataProfile, ColumnProfile } from '../types';
 
 interface DataProfilePanelProps {
   profile: DataProfile;
+}
+
+function formatMemory(mb: number): string {
+  if (mb < 0.01) {
+    const kb = mb * 1024;
+    return `${kb.toFixed(2)} KB`;
+  }
+  return `${mb.toFixed(2)} MB`;
 }
 
 function StatCard({
@@ -30,8 +38,8 @@ function StatCard({
   );
 }
 
-function ColumnCard({ column }: { column: ColumnProfile }) {
-  const isNumeric = column.mean !== undefined;
+function ColumnCard({ column, totalRows }: { column: ColumnProfile; totalRows: number }) {
+  const isNumeric = column.mean !== null && column.mean !== undefined;
   const Icon = isNumeric ? Hash : Type;
 
   return (
@@ -59,13 +67,18 @@ function ColumnCard({ column }: { column: ColumnProfile }) {
         </div>
 
         {column.null_percentage > 0 && (
-          <div className="flex justify-between text-lens-400">
-            <span>Missing</span>
-            <span className={clsx(
-              column.null_percentage > 20 ? 'text-warning' : 'text-lens-200'
-            )}>
-              {column.null_percentage.toFixed(1)}%
-            </span>
+          <div>
+            <div className="flex justify-between text-lens-400">
+              <span>Missing</span>
+              <span className={clsx(
+                column.null_percentage > 20 ? 'text-warning' : 'text-lens-200'
+              )}>
+                {column.null_percentage.toFixed(1)}%
+              </span>
+            </div>
+            <p className="text-lens-600 text-xs mt-1">
+              {column.null_count} of {totalRows} rows are empty
+            </p>
           </div>
         )}
 
@@ -125,6 +138,11 @@ export function DataProfilePanel({ profile }: DataProfilePanelProps) {
       ? 'bg-warning/10'
       : 'bg-error/10';
 
+  // Calculate total missing cells for explanation
+  const totalCells = profile.row_count * profile.column_count;
+  const totalMissing = profile.columns.reduce((sum, col) => sum + col.null_count, 0);
+  const missingPercentage = totalCells > 0 ? (totalMissing / totalCells * 100).toFixed(1) : 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -153,6 +171,18 @@ export function DataProfilePanel({ profile }: DataProfilePanelProps) {
             </div>
           </div>
         </div>
+
+        {/* Quality explanation */}
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-surface-overlay/50">
+          <Info className="w-4 h-4 text-lens-500 shrink-0 mt-0.5" />
+          <p className="text-lens-500 text-xs">
+            Quality score is based on data completeness.
+            {totalMissing > 0
+              ? ` Your dataset has ${missingPercentage}% empty cells (${totalMissing} of ${totalCells} total cells).`
+              : ' Your dataset has no missing values.'
+            }
+          </p>
+        </div>
       </div>
 
       {/* Stats Grid - 2x2 on mobile */}
@@ -170,7 +200,7 @@ export function DataProfilePanel({ profile }: DataProfilePanelProps) {
         <StatCard
           icon={HardDrive}
           label="Memory"
-          value={`${profile.memory_usage_mb.toFixed(2)} MB`}
+          value={formatMemory(profile.memory_usage_mb)}
         />
         <StatCard
           icon={FileType}
@@ -205,7 +235,7 @@ export function DataProfilePanel({ profile }: DataProfilePanelProps) {
         <h3 className="text-lens-300 font-medium mb-4">Column Profiles</h3>
         <div className="grid grid-cols-1 gap-3">
           {profile.columns.map((column) => (
-            <ColumnCard key={column.name} column={column} />
+            <ColumnCard key={column.name} column={column} totalRows={profile.row_count} />
           ))}
         </div>
       </div>
